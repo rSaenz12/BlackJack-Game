@@ -6,7 +6,8 @@ import (
 
 	"GuiPlusGame/game" // Import game package
 	"GuiPlusGame/ui"   // Import ui package
-	"gioui.org/app"    // Required for app.Window and app.Main
+
+	"gioui.org/app" // Required for app.Window and app.Main
 )
 
 func main() {
@@ -21,6 +22,7 @@ func main() {
 		//main application window
 		window := new(app.Window)
 
+		// width x height in pixels
 		// Pass the window and the initialized game state to your UI's Run function
 		if err := ui.RunMenu(window, currentGame); err != nil { // Pass currentGame here
 			log.Fatal(err)

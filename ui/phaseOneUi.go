@@ -69,6 +69,9 @@ func RunPhaseOne(window *app.Window, gameInstance *game.Game) error {
 			dealerCards = make([]image.Image, len(gameInstance.DealerHand))
 			dealerCards = GetCardImage(dealerHand)
 
+			cardWidth := 25 // approx width after scaling
+			spacing := 0
+
 			//dealer does not reveal their second card until its dealers turn
 			if !gameInstance.CheckRevealDealer() {
 				if len(dealerCards) != 0 {
@@ -108,22 +111,21 @@ func RunPhaseOne(window *app.Window, gameInstance *game.Game) error {
 				layout.Stacked(func(gtx layout.Context) layout.Dimensions {
 					yOffset := gtx.Constraints.Max.Y / 10
 
+					//printing the initial cards
 					return layout.Flex{
 						Axis:      layout.Horizontal,
 						Spacing:   layout.SpaceStart,
 						Alignment: layout.Middle,
 					}.Layout(gtx,
+						//user cards
 						layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 							// apply a vertical offset for the row of cards
 							offset := op.Offset(image.Pt(0, yOffset)).Push(gtx.Ops)
 							defer offset.Pop()
 
 							// Loop through cards and draw each with spacing
-							cardWidth := 25 // approx width after scaling
-							spacing := 0
 							cardHeight := int(float32(gtx.Constraints.Max.Y) * 0.6)
 							startingOffset := int(float32(gtx.Constraints.Max.X) / 2)
-
 							for i, card := range userCards {
 								cardOffset := op.Offset(image.Pt(startingOffset+(i*(cardWidth+spacing)), cardHeight)).Push(gtx.Ops)
 								scaleOp := op.Affine(f32.Affine2D{}.Scale(f32.Pt(0, 0), f32.Pt(scale, scale))).Push(gtx.Ops)
@@ -137,14 +139,14 @@ func RunPhaseOne(window *app.Window, gameInstance *game.Game) error {
 							}
 							return layout.Dimensions{Size: image.Pt(len(userCards)*(cardWidth+spacing), cardWidth)}
 						}), //End of layout.Rigid
+						//dealers cards
 						layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 							// vertical offset for the cards to be in correct places
+							//changing 0 to 50
 							offset := op.Offset(image.Pt(0, yOffset)).Push(gtx.Ops)
 							defer offset.Pop()
 
 							// Loop through cards and draw each with spacing
-							cardWidth := 25
-							spacing := 0
 							cardHeight := int(float32(gtx.Constraints.Max.Y) * .001)
 							startingOffset := int(float32(gtx.Constraints.Max.X) / 2)
 
