@@ -2,13 +2,14 @@ package ui
 
 import (
 	"GuiPlusGame/game"
+	"image"
+
 	"gioui.org/app"
 	"gioui.org/f32"
 	"gioui.org/layout"
 	"gioui.org/op"
 	"gioui.org/op/paint"
 	"gioui.org/widget"
-	"image"
 )
 
 func RunHitUserUi(window *app.Window, gameInstance *game.Game) error {
@@ -29,6 +30,7 @@ func RunHitUserUi(window *app.Window, gameInstance *game.Game) error {
 		cardString := card.Rank + card.Suit
 		userHand = append(userHand, cardString)
 	}
+
 	//creating array of strings for loading back of card images
 	for _, card := range gameInstance.DealerHand {
 		cardString := card.Rank + card.Suit
@@ -80,8 +82,19 @@ func RunHitUserUi(window *app.Window, gameInstance *game.Game) error {
 			}
 
 			// Hit calls next UI and game input
+			//Had to add extra logic due to 4th card and on not printing
 			if hitButton.Clicked(gtx) {
 				gameInstance.HitUser("1")
+
+				//forcefully rebuild the users Hand
+				userHand = nil
+				for _, card := range gameInstance.UserHand {
+					cardString := card.Rank + card.Suit
+					userHand = append(userHand, cardString)
+				}
+				userCards = GetCardImage(userHand)
+
+				window.Invalidate()
 			}
 
 			// Stand calls next game input
@@ -171,6 +184,7 @@ func RunHitUserUi(window *app.Window, gameInstance *game.Game) error {
 			)
 			if gameInstance.CheckGameEnded() {
 				switchToWinOrLossScreen = true
+				window.Invalidate()
 			}
 
 			e.Frame(gtx.Ops)
